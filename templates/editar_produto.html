@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Produto</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; text-align: center; }
+        h1 { color: #007BFF; margin-bottom: 20px; }
+        form { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; text-align: left; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #007BFF; outline: none; }
+        button { margin-top: 25px; padding: 12px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        .voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #007BFF; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Editar Produto</h1>
+    
+    <form action="/editar_produto/{{ produto[0] }}" method="POST">
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" value="{{ produto[1] }}" required>
+        
+        <label for="preco_atual">Preço (R$):</label>
+        <input type="number" id="preco_atual" name="preco_atual" step="0.01" min="0" value="{{ produto[2] }}" required>
+
+        <label for="quantidade_estoque">Estoque Inicial (Qtd):</label>
+        <input type="number" id="quantidade_estoque" name="quantidade_estoque" min="0" value="{{ produto[3] }}" required>
+        
+        <button type="submit">Salvar Alterações</button>
+    </form>
+    
+    <a href="/estoque" class="voltar">⬅ Voltar ao Estoque</a>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Novo Produto</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background-color: #f4f4f9; 
+            color: #333; 
+            text-align: center; 
+        }
+        h1 { 
+            color: #fd7e14; 
+            margin-bottom: 20px; 
+        }
+        form { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            max-width: 400px; 
+            margin: 0 auto; 
+            text-align: left; 
+        }
+        label { 
+            display: block; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            color: #555; 
+        }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            margin-top: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 14px;
+        }
+        input:focus { 
+            border-color: #fd7e14; 
+            outline: none; 
+            box-shadow: 0 0 5px rgba(253, 126, 20, 0.3);
+        }
+        button { 
+            margin-top: 25px; 
+            padding: 12px; 
+            background-color: #fd7e14; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            font-size: 16px; 
+        }
+        button:hover { background-color: #e86e10; }
+        .voltar { 
+            display: inline-block; 
+            margin-top: 20px; 
+            text-decoration: none; 
+            color: #007BFF; 
+            font-weight: bold; 
+        }
+        .voltar:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Novo Produto</h1>
+    
+    <form action="/novo_produto" method="POST">
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" required placeholder="Ex: Teclado Mecânico">
+        
+        <label for="preco_atual">Preço (R$):</label>
+        <input type="number" id="preco_atual" name="preco_atual" step="0.01" min="0" required placeholder="Ex: 150.50">
+
+        <label for="quantidade_estoque">Estoque Inicial (Qtd):</label>
+        <input type="number" id="quantidade_estoque" name="quantidade_estoque" min="0" required placeholder="Ex: 50">
+        
+        <button type="submit">Salvar Produto</button>
+    </form>
+    
+    <a href="/" class="voltar">⬅ Voltar ao Dashboard</a>
+</body>
+</html>

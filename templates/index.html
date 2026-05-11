@@ -18,7 +18,7 @@
         .table-wrapper {
             overflow-y: auto;
             border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);  
             background: white;
             margin-bottom: 25px;
             border: 1px solid #ddd; 
@@ -41,7 +41,6 @@
         }
         .baixo-estoque { color: red; font-weight: bold; }
 
-        /* Estilização suave da barra de rolagem */
         .table-wrapper::-webkit-scrollbar { width: 8px; }
         .table-wrapper::-webkit-scrollbar-track { background: #f1f1f1; }
         .table-wrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
@@ -56,14 +55,23 @@
         <a href="/novo_cliente" class="btn btn-cliente">👤 Novo Cliente</a>
         <a href="/clientes" class="btn btn-ver-clientes">👥 Ver Clientes</a>
         <a href="/estoque" class="btn btn-ver-estoque">📦 Ver Estoque Completo</a>
+        <a href="/novo_produto" class="btn" style="background-color: #fd7e14;">📦 Novo Produto</a>
     </div>
 
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        {% for message in messages %}
-          <div style="padding: 15px; background-color: #ffcccc; color: #a00; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #ff9999;">
-            {{ message }}
-          </div>
+        {% for category, message in messages %}
+          
+          {% if category == 'success' %}
+            <div style="padding: 15px; background-color: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #c3e6cb;">
+              {{ message }}
+            </div>
+          {% else %}
+            <div style="padding: 15px; background-color: #ffcccc; color: #a00; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #ff9999;">
+              {{ message }}
+            </div>
+          {% endif %}
+
         {% endfor %}
       {% endif %}
     {% endwith %}

@@ -103,7 +103,7 @@ def finalizar_venda():
             if estoque_atual < item['quantidade']:
                 conn.rollback() 
                 conn.close()
-                flash(f"⚠️ Venda cancelada! Estoque insuficiente para '{nome_produto}'. Restam apenas {estoque_atual} unidades.")
+                flash(f"Venda cancelada! Estoque insuficiente para '{nome_produto}'. Restam apenas {estoque_atual} unidades.")
                 return redirect(url_for('nova_venda'))
 
             cursor.execute("""
@@ -168,6 +168,75 @@ def clientes():
     lista_clientes = cursor.fetchall()
     conn.close()
     return render_template("clientes.html", clientes=lista_clientes)
+
+# Rota 8: Cadastrar Novo Produto
+@app.route('/novo_produto', methods=['GET', 'POST'])
+def novo_produto():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        preco = float(request.form['preco_atual'])
+        estoque = int(request.form['quantidade_estoque'])
+        
+        conn = sqlite3.connect("mini_erp.db")
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute("INSERT INTO produtos (nome, preco_atual, quantidade_estoque) VALUES (?, ?, ?)", (nome, preco, estoque))
+            conn.commit()
+            flash(f"Produto '{nome}' cadastrado com sucesso!", "success")
+        except sqlite3.Error as e:
+            conn.rollback()
+            flash("Erro ao cadastrar o produto no banco de dados.", "error")
+        finally:
+            conn.close()
+            
+        return redirect(url_for('dashboard'))
+
+    return render_template("novo_produto.html")
+
+# Rota 9: Deletar Produto
+@app.route('/deletar_produto/<int:id>')
+def deletar_produto(id):
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM produtos WHERE id = ?", (id,))
+        conn.commit()
+        flash("Produto deletado com sucesso!", "success")
+    except sqlite3.Error:
+        flash("Erro: Não é possível deletar um produto que já possui vendas registradas.", "error")
+    finally:
+        conn.close()
+        
+    return redirect(url_for('estoque'))
+
+# Rota 10: Editar Produto
+@app.route('/editar_produto/<int:id>', methods=['GET', 'POST'])
+def editar_produto(id):
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        nome = request.form['nome']
+        preco = float(request.form['preco_atual'])
+        estoque = int(request.form['quantidade_estoque'])
+
+        try:
+            cursor.execute("UPDATE produtos SET nome = ?, preco_atual = ?, quantidade_estoque = ? WHERE id = ?", (nome, preco, estoque, id))
+            conn.commit()
+            flash(f"Produto '{nome}' atualizado com sucesso!", "success")
+        except sqlite3.Error:
+            flash("Erro ao atualizar o produto.", "error")
+        finally:
+            conn.close()
+            
+        return redirect(url_for('estoque'))
+
+    cursor.execute("SELECT id, nome, preco_atual, quantidade_estoque FROM produtos WHERE id = ?", (id,))
+    produto = cursor.fetchone()
+    conn.close()
+
+    return render_template("editar_produto.html", produto=produto)
 
 
 if __name__ == "__main__":
