@@ -238,6 +238,51 @@ def editar_produto(id):
 
     return render_template("editar_produto.html", produto=produto)
 
+# Rota 11: Deletar Cliente
+@app.route('/deletar_cliente/<int:id>')
+def deletar_cliente(id):
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM clientes WHERE id = ?", (id,))
+        conn.commit()
+        flash("Cliente deletado com sucesso!", "success")
+    except sqlite3.Error:
+        flash("Erro: Não é possível deletar um cliente que já possui pedidos registrados no sistema.", "error")
+    finally:
+        conn.close()
+        
+    return redirect(url_for('clientes'))
+
+# Rota 12: Editar Cliente
+@app.route('/editar_cliente/<int:id>', methods=['GET', 'POST'])
+def editar_cliente(id):
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email']
+
+        try:
+            cursor.execute("UPDATE clientes SET nome = ?, email = ? WHERE id = ?", (nome, email, id))
+            conn.commit()
+            flash(f"Cliente '{nome}' atualizado com sucesso!", "success")
+        except sqlite3.IntegrityError:
+            flash("Erro: Este e-mail já está em uso por outro cliente.", "error")
+        except sqlite3.Error:
+            flash("Erro interno ao atualizar o cliente.", "error")
+        finally:
+            conn.close()
+            
+        return redirect(url_for('clientes'))
+
+    cursor.execute("SELECT id, nome, email FROM clientes WHERE id = ?", (id,))
+    cliente = cursor.fetchone()
+    conn.close()
+
+    return render_template("editar_cliente.html", cliente=cliente)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
