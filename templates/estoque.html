@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Estoque</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
+        h1 { color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #ffc107; color: #333; }
+        .voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #007BFF; font-weight: bold; }
+        .baixo-estoque { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Controle de Estoque</h1>
+    
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Produto</th>
+            <th>Preço Atual</th>
+            <th>Quantidade em Estoque</th>
+        </tr>
+        
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto[0] }}</td>
+            <td>{{ produto[1] }}</td>
+            <td>R$ {{ "%.2f"|format(produto[2]) }}</td>
+            <td class="{% if produto[3] < 5 %}baixo-estoque{% endif %}">
+                {{ produto[3] }} un.
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <a href="/" class="voltar">⬅ Voltar ao Dashboard</a>
+</body>
+</html>

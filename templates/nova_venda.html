@@ -22,9 +22,22 @@
     </style>
 </head>
 <body>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="max-width: 900px; margin: 0 auto 20px auto;">
+            {% for message in messages %}
+              <div style="padding: 15px; background-color: #ffcccc; color: #a00; border-radius: 5px; font-weight: bold; text-align: center; border: 1px solid #ff9999;">
+                {{ message }}
+              </div>
+            {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <div class="grid-container">
         <div class="box">
-            <h2>🛒 Adicionar Produto</h2>
+            <h2>Adicionar Produto</h2>
             <form action="/nova_venda" method="POST">
                 
                 <label for="cliente_id">Cliente (Dono do Carrinho):</label>
