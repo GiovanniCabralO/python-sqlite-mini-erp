@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini ERP - Dashboard</title>
+    <style>
+        body { 
+            font-family: Arial, 
+            sans-serif; margin: 40px; 
+            background-color: #f4f4f9; 
+            color: #333; 
+        }
+        h1 { 
+            color: #194569; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            background: white; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+        }
+        th, td { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #2386A6; 
+            color: white; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard de Vendas do Mini ERP</h1>
+    
+    <table>
+        <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Qtd</th>
+            <th>Total do Item</th>
+            <th>Data</th>
+        </tr>
+        
+        {% for venda in relatorio_vendas %}
+        <tr>
+            <td>#{{ venda[0] }}</td>
+            <td>{{ venda[1] }}</td>
+            <td>{{ venda[2] }}</td>
+            <td>{{ venda[3] }}</td>
+            <td>R$ {{ "%.2f"|format(venda[5]) }}</td>
+            <td>{{ venda[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
