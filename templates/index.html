@@ -4,36 +4,23 @@
     <meta charset="UTF-8">
     <title>Mini ERP - Dashboard</title>
     <style>
-        body { 
-            font-family: Arial, 
-            sans-serif; margin: 40px; 
-            background-color: #f4f4f9; 
-            color: #333; 
-        }
-        h1 { 
-            color: #194569; 
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px; 
-            background: white; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
-        }
-        th, td { 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            text-align: left; 
-        }
-        th { 
-            background-color: #2386A6; 
-            color: white; 
-        }
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
+        h1 { color: #194569; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #2386A6; color: white; }
+        .btn-nova-venda { display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px; font-weight: bold;}
+        .btn-nova-venda:hover { background-color: #218838; }
     </style>
 </head>
 <body>
-    <h1>Dashboard de Vendas do Mini ERP</h1>
+    <h1>📊 Dashboard de Vendas do Mini ERP</h1>
     
+    <div style="margin-bottom: 20px;">
+        <a href="/nova_venda" class="btn-nova-venda">➕ Registrar Nova Venda</a>
+        <a href="/novo_cliente" class="btn-nova-venda" style="background-color: #17a2b8;">👤 Novo Cliente</a>
+    </div>
+
     <table>
         <tr>
             <th>Pedido</th>

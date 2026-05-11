@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Venda</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
+        .grid-container { display: flex; gap: 30px; max-width: 900px; margin: 0 auto; }
+        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; }
+        h2 { color: #194569; margin-top: 0; }
+        label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; color: #555; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { margin-top: 20px; width: 100%; padding: 12px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-add { background-color: #007BFF; }
+        .btn-add:hover { background-color: #0056b3; }
+        .btn-finalizar { background-color: #28a745; font-size: 18px; }
+        .btn-finalizar:hover { background-color: #218838; }
+        .btn-limpar { background-color: #dc3545; display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 4px; margin-top: 10px; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+        .voltar { display: block; margin-top: 20px; text-decoration: none; color: #007BFF; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="box">
+            <h2>🛒 Adicionar Produto</h2>
+            <form action="/nova_venda" method="POST">
+                
+                <label for="cliente_id">Cliente (Dono do Carrinho):</label>
+                <select name="cliente_id" id="cliente_id" required>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente[0] }}" {% if cliente_selecionado == cliente[0]|string %}selected{% endif %}>
+                            {{ cliente[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="produto_id">Produto:</label>
+                <select name="produto_id" id="produto_id" required>
+                    {% for produto in produtos %}
+                        <option value="{{ produto[0] }}">{{ produto[1] }} (R$ {{ "%.2f"|format(produto[2]) }})</option>
+                    {% endfor %}
+                </select>
+
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" name="quantidade" id="quantidade" min="1" value="1" required>
+
+                <button type="submit" class="btn-add">➕ Adicionar ao Carrinho</button>
+            </form>
+            <a href="/" class="voltar">⬅ Voltar ao Dashboard</a>
+        </div>
+
+        <div class="box">
+            <h2>🛍️ Seu Carrinho</h2>
+            
+            {% if carrinho|length == 0 %}
+                <p style="color: #888; font-style: italic;">O carrinho está vazio.</p>
+            {% else %}
+                <table>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Qtd</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    {% set ns = namespace(total=0) %}
+                    {% for item in carrinho %}
+                    <tr>
+                        <td>{{ item['nome'] }}</td>
+                        <td>{{ item['quantidade'] }}x</td>
+                        <td>R$ {{ "%.2f"|format(item['subtotal']) }}</td>
+                    </tr>
+                    {% set ns.total = ns.total + item['subtotal'] %}
+                    {% endfor %}
+                </table>
+                <h3 style="text-align: right; color: #28a745;">Total: R$ {{ "%.2f"|format(ns.total) }}</h3>
+                
+                <form action="/finalizar_venda" method="POST">
+                    <button type="submit" class="btn-finalizar">✅ Finalizar Venda</button>
+                </form>
+                
+                <a href="/limpar_carrinho" class="btn-limpar">🗑️ Esvaziar Carrinho</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
