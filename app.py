@@ -73,6 +73,54 @@ def dashboard():
         lista_datas=lista_datas
     )
 
+# Rota 2: Tela de Nova Venda
+@app.route('/nova_venda')
+def nova_venda():
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT id, nome FROM clientes ORDER BY nome")
+    clientes = cursor.fetchall()
+    
+    cursor.execute("SELECT id, nome, preco_atual FROM produtos WHERE quantidade_estoque > 0 ORDER BY nome")
+    produtos = cursor.fetchall()
+    
+    conn.close()
+    
+    carrinho = session.get('carrinho', [])
+    total_carrinho = sum(item['preco'] * item['quantidade'] for item in carrinho)
+    
+    return render_template("nova_venda.html", clientes=clientes, produtos=produtos, carrinho=carrinho, total=total_carrinho)
+
+# Rota 2.1: Adicionar item ao Carrinho
+@app.route('/adicionar_carrinho', methods=['POST'])
+def adicionar_carrinho():
+    cliente_id = request.form.get('cliente_id')
+    produto_id = request.form.get('produto_id')
+    quantidade = int(request.form.get('quantidade'))
+    
+    conn = sqlite3.connect("mini_erp.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT nome, preco_atual FROM produtos WHERE id = ?", (produto_id,))
+    produto = cursor.fetchone()
+    conn.close()
+    
+    if produto:
+        nome_produto, preco = produto
+        item = {
+            'produto_id': produto_id,
+            'nome_produto': nome_produto,
+            'quantidade': quantidade,
+            'preco': preco
+        }
+        
+        carrinho = session.get('carrinho', [])
+        carrinho.append(item)
+        session['carrinho'] = carrinho
+        session['cliente_id'] = cliente_id 
+        
+    return redirect(url_for('nova_venda'))
+
 # Rota 3: Descarregar o Carrinho no Banco de Dados
 @app.route('/finalizar_venda', methods=['POST'])
 def finalizar_venda():
