@@ -15,8 +15,36 @@ def dashboard():
     conn = sqlite3.connect("mini_erp.db")
     cursor = conn.cursor()
     
-    cursor.execute("SELECT * FROM vw_relatorio_vendas")
+    filtro_cliente = request.args.get('cliente')
+    filtro_produto = request.args.get('produto')
+    filtro_data = request.args.get('data')
+    
+    query_vendas = "SELECT * FROM vw_relatorio_vendas WHERE 1=1"
+    parametros = []
+    
+    if filtro_cliente:
+        query_vendas += " AND nome_cliente = ?"
+        parametros.append(filtro_cliente)
+        
+    if filtro_produto:
+        query_vendas += " AND nome_produto = ?"
+        parametros.append(filtro_produto)
+
+    if filtro_data:
+        query_vendas += " AND data_venda = ?"
+        parametros.append(filtro_data)
+        
+    cursor.execute(query_vendas, parametros)
     dados_vendas = cursor.fetchall()
+
+    cursor.execute("SELECT DISTINCT nome_cliente FROM vw_relatorio_vendas ORDER BY nome_cliente")
+    lista_clientes = [linha[0] for linha in cursor.fetchall()]
+
+    cursor.execute("SELECT DISTINCT nome_produto FROM vw_relatorio_vendas ORDER BY nome_produto")
+    lista_produtos = [linha[0] for linha in cursor.fetchall()]
+
+    cursor.execute("SELECT DISTINCT data_venda FROM vw_relatorio_vendas ORDER BY data_venda DESC")
+    lista_datas = [linha[0] for linha in cursor.fetchall()]
 
     query_ranking = """
         SELECT c.nome, SUM(ip.quantidade * ip.preco_vendido) as total_comprado
@@ -35,52 +63,15 @@ def dashboard():
     
     conn.close()
     
-    return render_template("index.html", relatorio_vendas=dados_vendas, ranking=ranking_clientes, estoque=resumo_estoque)
-
-# Rota 2: Tela de Vendas 
-@app.route('/nova_venda', methods=['GET', 'POST'])
-def nova_venda():
-    if 'carrinho' not in session:
-        session['carrinho'] = []
-        session['cliente_id'] = None 
-
-    conn = sqlite3.connect("mini_erp.db")
-    cursor = conn.cursor()
-
-    if request.method == 'POST':
-        cliente_id = request.form.get('cliente_id')
-        produto_id = request.form.get('produto_id')
-        quantidade = int(request.form.get('quantidade'))
-
-        session['cliente_id'] = cliente_id
-
-        cursor.execute("SELECT nome, preco_atual FROM produtos WHERE id = ?", (produto_id,))
-        produto = cursor.fetchone()
-
-        if produto:
-            item = {
-                'produto_id': produto_id,
-                'nome': produto[0],
-                'preco': produto[1],
-                'quantidade': quantidade,
-                'subtotal': produto[1] * quantidade
-            }
-            carrinho = session['carrinho']
-            carrinho.append(item)
-            session['carrinho'] = carrinho
-
-        conn.close()
-        return redirect(url_for('nova_venda'))
-
-    # 3. MODO GET 
-    cursor.execute("SELECT id, nome FROM clientes")
-    clientes = cursor.fetchall()
-
-    cursor.execute("SELECT id, nome, preco_atual, quantidade_estoque FROM produtos")
-    produtos = cursor.fetchall()
-    conn.close()
-
-    return render_template("nova_venda.html", clientes=clientes, produtos=produtos, carrinho=session['carrinho'], cliente_selecionado=str(session['cliente_id']))
+    return render_template(
+        "index.html", 
+        relatorio_vendas=dados_vendas, 
+        ranking=ranking_clientes, 
+        estoque=resumo_estoque,
+        lista_clientes=lista_clientes,
+        lista_produtos=lista_produtos,
+        lista_datas=lista_datas
+    )
 
 # Rota 3: Descarregar o Carrinho no Banco de Dados
 @app.route('/finalizar_venda', methods=['POST'])

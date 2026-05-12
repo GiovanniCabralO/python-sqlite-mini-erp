@@ -14,17 +14,18 @@
         .btn-cliente { background-color: #17a2b8; }
         .btn-ver-clientes { background-color: #6c757d; }
         .btn-ver-estoque { background-color: #ffc107; color: #333; }
+        .btn-novo-produto { background-color: #fd7e14; }
 
         .table-wrapper {
             overflow-y: auto;
             border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);  
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             background: white;
             margin-bottom: 25px;
-            border: 1px solid #ddd; 
+            border: 1px solid #ddd;
         }
 
-        table { width: 100%; border-collapse: collapse; margin: 0; } 
+        table { width: 100%; border-collapse: collapse; margin: 0; }
         th, td { padding: 12px; border: 1px solid #eee; text-align: left; }
         
         th { position: sticky; top: 0; z-index: 1; }
@@ -45,6 +46,19 @@
         .table-wrapper::-webkit-scrollbar-track { background: #f1f1f1; }
         .table-wrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         .table-wrapper::-webkit-scrollbar-thumb:hover { background: #bbb; }
+        
+        /* Estilo bonitinho para os menus de seleção (Dropdown) */
+        .select-filtro {
+            float: right; 
+            width: 110px; 
+            padding: 4px; 
+            border-radius: 4px; 
+            border: none; 
+            font-size: 12px; 
+            color: #333; 
+            outline: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -55,13 +69,12 @@
         <a href="/novo_cliente" class="btn btn-cliente">👤 Novo Cliente</a>
         <a href="/clientes" class="btn btn-ver-clientes">👥 Ver Clientes</a>
         <a href="/estoque" class="btn btn-ver-estoque">📦 Ver Estoque Completo</a>
-        <a href="/novo_produto" class="btn" style="background-color: #fd7e14;">📦 Novo Produto</a>
+        <a href="/novo_produto" class="btn btn-novo-produto">📦 Novo Produto</a>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          
           {% if category == 'success' %}
             <div style="padding: 15px; background-color: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #c3e6cb;">
               {{ message }}
@@ -71,37 +84,72 @@
               {{ message }}
             </div>
           {% endif %}
-
         {% endfor %}
       {% endif %}
     {% endwith %}
 
-    <h2>Últimas Vendas</h2>
+    <h2>
+        Últimas Vendas
+        {% if request.args.get('cliente') or request.args.get('produto') or request.args.get('data') %}
+            <a href="/" style="font-size: 14px; margin-left: 15px; color: #dc3545; text-decoration: none; font-weight: bold;">✖ Limpar Filtros</a>
+        {% endif %}
+    </h2>
+
     <div class="table-wrapper" style="height: 350px;">
-        <table>
-            <thead>
-                <tr>
-                    <th class="th-vendas">Pedido</th>
-                    <th class="th-vendas">Cliente</th>
-                    <th class="th-vendas">Produto</th>
-                    <th class="th-vendas">Qtd</th>
-                    <th class="th-vendas">Total do Item</th>
-                    <th class="th-vendas">Data</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for venda in relatorio_vendas %}
-                <tr>
-                    <td>#{{ venda[0] }}</td>
-                    <td>{{ venda[1] }}</td>
-                    <td>{{ venda[2] }}</td>
-                    <td>{{ venda[3] }}</td>
-                    <td>R$ {{ "%.2f"|format(venda[5]) }}</td>
-                    <td>{{ venda[6] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <form id="formFiltros" method="GET" action="/">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="th-vendas">Pedido</th>
+                        
+                        <th class="th-vendas" style="min-width: 220px;">
+                            Cliente
+                            <select name="cliente" class="select-filtro" onchange="document.getElementById('formFiltros').submit();">
+                                <option value="">Todos</option>
+                                {% for c in lista_clientes %}
+                                    <option value="{{ c }}" {% if request.args.get('cliente') == c %}selected{% endif %}>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </th>
+                        
+                        <th class="th-vendas" style="min-width: 220px;">
+                            Produto
+                            <select name="produto" class="select-filtro" onchange="document.getElementById('formFiltros').submit();">
+                                <option value="">Todos</option>
+                                {% for p in lista_produtos %}
+                                    <option value="{{ p }}" {% if request.args.get('produto') == p %}selected{% endif %}>{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                        </th>
+                        
+                        <th class="th-vendas">Qtd</th>
+                        <th class="th-vendas">Total do Item</th>
+                        
+                        <th class="th-vendas" style="min-width: 180px;">
+                            Data
+                            <select name="data" class="select-filtro" onchange="document.getElementById('formFiltros').submit();">
+                                <option value="">Todas</option>
+                                {% for d in lista_datas %}
+                                    <option value="{{ d }}" {% if request.args.get('data') == d %}selected{% endif %}>{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venda in relatorio_vendas %}
+                    <tr>
+                        <td>#{{ venda[0] }}</td>
+                        <td>{{ venda[1] }}</td>
+                        <td>{{ venda[2] }}</td>
+                        <td>{{ venda[3] }}</td>
+                        <td>R$ {{ "%.2f"|format(venda[5]) }}</td>
+                        <td>{{ venda[6] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
     </div>
 
     <div class="dashboard-bottom">
