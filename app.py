@@ -2,12 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 import os
 from dotenv import load_dotenv
+from api import api_bp
 
 load_dotenv()
 
 app = Flask(__name__)
-
 app.secret_key = os.getenv("SECRET_KEY")
+
+# Rotas de API JSON para integração com Power BI via Web connector
+app.register_blueprint(api_bp)
 
 # Rota 1: Dashboard
 @app.route('/')
@@ -321,7 +324,6 @@ def editar_cliente(id):
     conn.close()
 
     return render_template("editar_cliente.html", cliente=cliente)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
