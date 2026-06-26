@@ -1,5 +1,6 @@
 import sqlite3
 import random
+from datetime import datetime, timedelta
 
 def popular_banco():
     conn = sqlite3.connect("mini_erp.db")
@@ -52,7 +53,9 @@ def popular_banco():
     for _ in range(qtd_pedidos):
         # Escolhe um cliente aleatório
         cliente_id = random.choice(clientes_ids)
-        cursor.execute("INSERT INTO pedidos (cliente_id) VALUES (?)", (cliente_id,))
+        dias_atras = random.randint(0, 180)
+        data_venda = (datetime.now() - timedelta(days=dias_atras)).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("INSERT INTO pedidos (cliente_id, data_venda) VALUES (?, ?)", (cliente_id, data_venda))
         pedido_id = cursor.lastrowid
 
         # Decide comprar de 1 a 3 produtos diferentes neste pedido
