@@ -6,6 +6,16 @@ Aplicação web full-stack que simula um sistema ERP para pequenas empresas, des
 
 ---
 
+## 📸 Screenshots
+
+### Dashboard Flask
+![Dashboard Flask](screenshots/dashboard.png)
+
+### Dashboard Power BI
+![Dashboard Power BI](screenshots/powerbi.png)
+
+---
+
 ## ✨ Funcionalidades
 
 - **Fluxo de vendas** — carrinho por sessão, pedidos com múltiplos itens, validação de estoque antes de finalizar
